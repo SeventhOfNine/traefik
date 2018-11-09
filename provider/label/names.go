@@ -29,6 +29,7 @@ const (
 	SuffixBackendMaxConnAmount                               = "backend.maxconn.amount"
 	SuffixBackendMaxConnExtractorFunc                        = "backend.maxconn.extractorfunc"
 	SuffixBackendBuffering                                   = "backend.buffering"
+	SuffixBackendResponseForwardingFlushInterval             = "backend.responseForwarding.flushInterval"
 	SuffixBackendBufferingMaxRequestBodyBytes                = SuffixBackendBuffering + ".maxRequestBodyBytes"
 	SuffixBackendBufferingMemRequestBodyBytes                = SuffixBackendBuffering + ".memRequestBodyBytes"
 	SuffixBackendBufferingMaxResponseBodyBytes               = SuffixBackendBuffering + ".maxResponseBodyBytes"
@@ -47,6 +48,7 @@ const (
 	SuffixFrontendAuthDigestUsersFile                        = SuffixFrontendAuthDigest + ".usersFile"
 	SuffixFrontendAuthForward                                = SuffixFrontendAuth + ".forward"
 	SuffixFrontendAuthForwardAddress                         = SuffixFrontendAuthForward + ".address"
+	SuffixFrontendAuthForwardAuthResponseHeaders             = SuffixFrontendAuthForward + ".authResponseHeaders"
 	SuffixFrontendAuthForwardTLS                             = SuffixFrontendAuthForward + ".tls"
 	SuffixFrontendAuthForwardTLSCa                           = SuffixFrontendAuthForwardTLS + ".ca"
 	SuffixFrontendAuthForwardTLSCaOptional                   = SuffixFrontendAuthForwardTLS + ".caOptional"
@@ -132,6 +134,7 @@ const (
 	TraefikBackendMaxConnAmount                              = Prefix + SuffixBackendMaxConnAmount
 	TraefikBackendMaxConnExtractorFunc                       = Prefix + SuffixBackendMaxConnExtractorFunc
 	TraefikBackendBuffering                                  = Prefix + SuffixBackendBuffering
+	TraefikBackendResponseForwardingFlushInterval            = Prefix + SuffixBackendResponseForwardingFlushInterval
 	TraefikBackendBufferingMaxRequestBodyBytes               = Prefix + SuffixBackendBufferingMaxRequestBodyBytes
 	TraefikBackendBufferingMemRequestBodyBytes               = Prefix + SuffixBackendBufferingMemRequestBodyBytes
 	TraefikBackendBufferingMaxResponseBodyBytes              = Prefix + SuffixBackendBufferingMaxResponseBodyBytes
@@ -150,6 +153,7 @@ const (
 	TraefikFrontendAuthDigestUsersFile                       = Prefix + SuffixFrontendAuthDigestUsersFile
 	TraefikFrontendAuthForward                               = Prefix + SuffixFrontendAuthForward
 	TraefikFrontendAuthForwardAddress                        = Prefix + SuffixFrontendAuthForwardAddress
+	TraefikFrontendAuthForwardAuthResponseHeaders            = Prefix + SuffixFrontendAuthForwardAuthResponseHeaders
 	TraefikFrontendAuthForwardTLS                            = Prefix + SuffixFrontendAuthForwardTLS
 	TraefikFrontendAuthForwardTLSCa                          = Prefix + SuffixFrontendAuthForwardTLSCa
 	TraefikFrontendAuthForwardTLSCaOptional                  = Prefix + SuffixFrontendAuthForwardTLSCaOptional

@@ -324,6 +324,7 @@ func TestSwarmBuildConfiguration(t *testing.T) {
 						label.TraefikFrontendAuthForwardTLSCert:               "server.crt",
 						label.TraefikFrontendAuthForwardTLSKey:                "server.key",
 						label.TraefikFrontendAuthForwardTLSInsecureSkipVerify: "true",
+						label.TraefikFrontendAuthForwardAuthResponseHeaders:   "X-Auth-User,X-Auth-Token",
 					}),
 					withEndpointSpec(modeVIP),
 					withEndpoint(virtualIP("1", "127.0.0.1/24")),
@@ -336,8 +337,7 @@ func TestSwarmBuildConfiguration(t *testing.T) {
 					EntryPoints:    []string{},
 					Auth: &types.Auth{
 						Forward: &types.Forward{
-							Address:            "auth.server",
-							TrustForwardHeader: true,
+							Address: "auth.server",
 							TLS: &types.ClientTLS{
 								CA:                 "ca.crt",
 								CAOptional:         true,
@@ -345,6 +345,8 @@ func TestSwarmBuildConfiguration(t *testing.T) {
 								Key:                "server.key",
 								InsecureSkipVerify: true,
 							},
+							TrustForwardHeader:  true,
+							AuthResponseHeaders: []string{"X-Auth-User", "X-Auth-Token"},
 						},
 					},
 					Routes: map[string]types.Route{
@@ -383,6 +385,7 @@ func TestSwarmBuildConfiguration(t *testing.T) {
 						label.TraefikBackend: "foobar",
 
 						label.TraefikBackendCircuitBreakerExpression:         "NetworkErrorRatio() > 0.5",
+						label.TraefikBackendResponseForwardingFlushInterval:  "10ms",
 						label.TraefikBackendHealthCheckScheme:                "http",
 						label.TraefikBackendHealthCheckPath:                  "/health",
 						label.TraefikBackendHealthCheckPort:                  "880",
@@ -589,6 +592,9 @@ func TestSwarmBuildConfiguration(t *testing.T) {
 					},
 					CircuitBreaker: &types.CircuitBreaker{
 						Expression: "NetworkErrorRatio() > 0.5",
+					},
+					ResponseForwarding: &types.ResponseForwarding{
+						FlushInterval: "10ms",
 					},
 					LoadBalancer: &types.LoadBalancer{
 						Method: "drr",

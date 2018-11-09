@@ -329,6 +329,7 @@ func TestProviderBuildConfiguration(t *testing.T) {
 						Attributes: []string{
 							"random.foo=bar",
 							label.TraefikFrontendAuthForwardAddress + "=auth.server",
+							label.TraefikFrontendAuthForwardAuthResponseHeaders + "=X-Auth-User,X-Auth-Token",
 							label.TraefikFrontendAuthForwardTrustForwardHeader + "=true",
 							label.TraefikFrontendAuthForwardTLSCa + "=ca.crt",
 							label.TraefikFrontendAuthForwardTLSCaOptional + "=true",
@@ -371,8 +372,7 @@ func TestProviderBuildConfiguration(t *testing.T) {
 					Auth: &types.Auth{
 						HeaderField: "X-WebAuth-User",
 						Forward: &types.Forward{
-							Address:            "auth.server",
-							TrustForwardHeader: true,
+							Address: "auth.server",
 							TLS: &types.ClientTLS{
 								CA:                 "ca.crt",
 								CAOptional:         true,
@@ -380,6 +380,8 @@ func TestProviderBuildConfiguration(t *testing.T) {
 								Cert:               "server.crt",
 								Key:                "server.key",
 							},
+							TrustForwardHeader:  true,
+							AuthResponseHeaders: []string{"X-Auth-User", "X-Auth-Token"},
 						},
 					},
 					EntryPoints: []string{},
@@ -406,6 +408,7 @@ func TestProviderBuildConfiguration(t *testing.T) {
 							label.TraefikBackend + "=foobar",
 
 							label.TraefikBackendCircuitBreakerExpression + "=NetworkErrorRatio() > 0.5",
+							label.TraefikBackendResponseForwardingFlushInterval + "=10ms",
 							label.TraefikBackendHealthCheckPath + "=/health",
 							label.TraefikBackendHealthCheckScheme + "=http",
 							label.TraefikBackendHealthCheckPort + "=880",
@@ -443,6 +446,7 @@ func TestProviderBuildConfiguration(t *testing.T) {
 							label.TraefikFrontendAuthDigestUsers + "=test:$apr1$H6uskkkW$IgXLP6ewTrSuBkTrqE8wj/,test2:$apr1$d9hr9HBB$4HxwgUir3HP4EsggP/QNo0",
 							label.TraefikFrontendAuthDigestUsersFile + "=.htpasswd",
 							label.TraefikFrontendAuthForwardAddress + "=auth.server",
+							label.TraefikFrontendAuthForwardAuthResponseHeaders + "=X-Auth-User,X-Auth-Token",
 							label.TraefikFrontendAuthForwardTrustForwardHeader + "=true",
 							label.TraefikFrontendAuthForwardTLSCa + "=ca.crt",
 							label.TraefikFrontendAuthForwardTLSCaOptional + "=true",
@@ -676,6 +680,9 @@ func TestProviderBuildConfiguration(t *testing.T) {
 					},
 					CircuitBreaker: &types.CircuitBreaker{
 						Expression: "NetworkErrorRatio() > 0.5",
+					},
+					ResponseForwarding: &types.ResponseForwarding{
+						FlushInterval: "10ms",
 					},
 					LoadBalancer: &types.LoadBalancer{
 						Method: "drr",
@@ -1033,6 +1040,7 @@ func TestProviderGetFrontendRule(t *testing.T) {
 	testCases := []struct {
 		desc     string
 		service  serviceUpdate
+		domain   string
 		expected string
 	}{
 		{
@@ -1041,7 +1049,17 @@ func TestProviderGetFrontendRule(t *testing.T) {
 				ServiceName: "foo",
 				Attributes:  []string{},
 			},
+			domain:   "localhost",
 			expected: "Host:foo.localhost",
+		},
+		{
+			desc: "When no domain should return default host foo",
+			service: serviceUpdate{
+				ServiceName: "foo",
+				Attributes:  []string{},
+			},
+			domain:   "",
+			expected: "Host:foo",
 		},
 		{
 			desc: "Should return host *.example.com",
@@ -1051,6 +1069,7 @@ func TestProviderGetFrontendRule(t *testing.T) {
 					"traefik.frontend.rule=Host:*.example.com",
 				},
 			},
+			domain:   "localhost",
 			expected: "Host:*.example.com",
 		},
 		{
@@ -1061,6 +1080,7 @@ func TestProviderGetFrontendRule(t *testing.T) {
 					"traefik.frontend.rule=Host:{{.ServiceName}}.example.com",
 				},
 			},
+			domain:   "localhost",
 			expected: "Host:foo.example.com",
 		},
 		{
@@ -1072,6 +1092,7 @@ func TestProviderGetFrontendRule(t *testing.T) {
 					"contextPath=/bar",
 				},
 			},
+			domain:   "localhost",
 			expected: "PathPrefix:/bar",
 		},
 	}
@@ -1082,7 +1103,7 @@ func TestProviderGetFrontendRule(t *testing.T) {
 			t.Parallel()
 
 			p := &Provider{
-				Domain:               "localhost",
+				Domain:               test.domain,
 				Prefix:               "traefik",
 				FrontEndRule:         "Host:{{.ServiceName}}.{{.Domain}}",
 				frontEndRuleTemplate: template.New("consul catalog frontend rule"),

@@ -52,7 +52,7 @@ func TestBuildConfiguration(t *testing.T) {
 						Backend:     "backend-instance",
 						Routes: map[string]types.Route{
 							"route-frontend-instance": {
-								Rule: "Host:instance.",
+								Rule: "Host:instance",
 							},
 						},
 						PassHostHeader: true,
@@ -101,7 +101,7 @@ func TestBuildConfiguration(t *testing.T) {
 						Backend:     "backend-instance",
 						Routes: map[string]types.Route{
 							"route-frontend-instance": {
-								Rule: "Host:instance.",
+								Rule: "Host:instance",
 							},
 						},
 						PassHostHeader: true,
@@ -146,7 +146,7 @@ func TestBuildConfiguration(t *testing.T) {
 						Backend:     "backend-instance",
 						Routes: map[string]types.Route{
 							"route-frontend-instance": {
-								Rule: "Host:instance.",
+								Rule: "Host:instance",
 							},
 						},
 						Auth: &types.Auth{
@@ -197,7 +197,7 @@ func TestBuildConfiguration(t *testing.T) {
 						Backend:     "backend-instance",
 						Routes: map[string]types.Route{
 							"route-frontend-instance": {
-								Rule: "Host:instance.",
+								Rule: "Host:instance",
 							},
 						},
 						Auth: &types.Auth{
@@ -248,7 +248,7 @@ func TestBuildConfiguration(t *testing.T) {
 						Backend:     "backend-instance",
 						Routes: map[string]types.Route{
 							"route-frontend-instance": {
-								Rule: "Host:instance.",
+								Rule: "Host:instance",
 							},
 						},
 						Auth: &types.Auth{
@@ -278,7 +278,9 @@ func TestBuildConfiguration(t *testing.T) {
 						label.TraefikFrontendAuthForwardTLSCaOptional:         aws.String("true"),
 						label.TraefikFrontendAuthForwardTLSCert:               aws.String("server.crt"),
 						label.TraefikFrontendAuthForwardTLSKey:                aws.String("server.key"),
-						label.TraefikFrontendAuthForwardTLSInsecureSkipVerify: aws.String("true"), label.TraefikFrontendAuthHeaderField: aws.String("X-WebAuth-User"),
+						label.TraefikFrontendAuthForwardTLSInsecureSkipVerify: aws.String("true"),
+						label.TraefikFrontendAuthHeaderField:                  aws.String("X-WebAuth-User"),
+						label.TraefikFrontendAuthForwardAuthResponseHeaders:   aws.String("X-Auth-User,X-Auth-Token"),
 					}),
 					iMachine(
 						mState(ec2.InstanceStateNameRunning),
@@ -305,14 +307,13 @@ func TestBuildConfiguration(t *testing.T) {
 						Backend:     "backend-instance",
 						Routes: map[string]types.Route{
 							"route-frontend-instance": {
-								Rule: "Host:instance.",
+								Rule: "Host:instance",
 							},
 						},
 						Auth: &types.Auth{
 							HeaderField: "X-WebAuth-User",
 							Forward: &types.Forward{
-								Address:            "auth.server",
-								TrustForwardHeader: true,
+								Address: "auth.server",
 								TLS: &types.ClientTLS{
 									CA:                 "ca.crt",
 									CAOptional:         true,
@@ -320,6 +321,8 @@ func TestBuildConfiguration(t *testing.T) {
 									Cert:               "server.crt",
 									Key:                "server.key",
 								},
+								TrustForwardHeader:  true,
+								AuthResponseHeaders: []string{"X-Auth-User", "X-Auth-Token"},
 							},
 						},
 						PassHostHeader: true,
@@ -341,6 +344,7 @@ func TestBuildConfiguration(t *testing.T) {
 						label.TraefikBackend: aws.String("foobar"),
 
 						label.TraefikBackendCircuitBreakerExpression:         aws.String("NetworkErrorRatio() > 0.5"),
+						label.TraefikBackendResponseForwardingFlushInterval:  aws.String("10ms"),
 						label.TraefikBackendHealthCheckScheme:                aws.String("http"),
 						label.TraefikBackendHealthCheckPath:                  aws.String("/health"),
 						label.TraefikBackendHealthCheckPort:                  aws.String("880"),
@@ -457,6 +461,9 @@ func TestBuildConfiguration(t *testing.T) {
 						},
 						CircuitBreaker: &types.CircuitBreaker{
 							Expression: "NetworkErrorRatio() > 0.5",
+						},
+						ResponseForwarding: &types.ResponseForwarding{
+							FlushInterval: "10ms",
 						},
 						LoadBalancer: &types.LoadBalancer{
 							Method: "drr",

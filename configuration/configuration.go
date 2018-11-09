@@ -34,6 +34,7 @@ import (
 	"github.com/containous/traefik/tls"
 	"github.com/containous/traefik/types"
 	"github.com/pkg/errors"
+	lego "github.com/xenolf/lego/acme"
 )
 
 const (
@@ -84,6 +85,7 @@ type GlobalConfiguration struct {
 	HealthCheck               *HealthCheckConfig      `description:"Health check parameters" export:"true"`
 	RespondingTimeouts        *RespondingTimeouts     `description:"Timeouts for incoming requests to the Traefik instance" export:"true"`
 	ForwardingTimeouts        *ForwardingTimeouts     `description:"Timeouts for requests forwarded to the backend servers" export:"true"`
+	KeepTrailingSlash         bool                    `description:"Do not remove trailing slash." export:"true"` // Deprecated
 	Docker                    *docker.Provider        `description:"Enable Docker backend with default settings" export:"true"`
 	File                      *file.Provider          `description:"Enable File backend with default settings" export:"true"`
 	Marathon                  *marathon.Provider      `description:"Enable Marathon backend with default settings" export:"true"`
@@ -258,6 +260,17 @@ func (gc *GlobalConfiguration) initACMEProvider() {
 		if gc.ACME.HTTPChallenge != nil && gc.ACME.TLSChallenge != nil {
 			log.Warn("Unable to use HTTP challenge and TLS challenge at the same time. Fallback to TLS challenge.")
 			gc.ACME.HTTPChallenge = nil
+		}
+
+		for _, domain := range gc.ACME.Domains {
+			if domain.Main != lego.UnFqdn(domain.Main) {
+				log.Warnf("FQDN detected, please remove the trailing dot: %s", domain.Main)
+			}
+			for _, san := range domain.SANs {
+				if san != lego.UnFqdn(san) {
+					log.Warnf("FQDN detected, please remove the trailing dot: %s", san)
+				}
+			}
 		}
 
 		if len(gc.ACME.DNSProvider) > 0 {

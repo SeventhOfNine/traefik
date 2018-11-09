@@ -56,12 +56,13 @@ func (p *Provider) buildConfiguration() *types.Configuration {
 		"getWhiteList":         p.getWhiteList,
 
 		// Backend functions
-		"getServers":        p.getServers,
-		"getCircuitBreaker": p.getCircuitBreaker,
-		"getLoadBalancer":   p.getLoadBalancer,
-		"getMaxConn":        p.getMaxConn,
-		"getHealthCheck":    p.getHealthCheck,
-		"getBuffering":      p.getBuffering,
+		"getServers":            p.getServers,
+		"getCircuitBreaker":     p.getCircuitBreaker,
+		"getResponseForwarding": p.getResponseForwarding,
+		"getLoadBalancer":       p.getLoadBalancer,
+		"getMaxConn":            p.getMaxConn,
+		"getHealthCheck":        p.getHealthCheck,
+		"getBuffering":          p.getBuffering,
 	}
 
 	configuration, err := p.GetConfiguration("templates/kv.tmpl", KvFuncMap, templateObjects)
@@ -232,6 +233,20 @@ func (p *Provider) getLoadBalancer(rootPath string) *types.LoadBalancer {
 	}
 
 	return lb
+}
+
+func (p *Provider) getResponseForwarding(rootPath string) *types.ResponseForwarding {
+	if !p.has(rootPath, pathBackendResponseForwardingFlushInterval) {
+		return nil
+	}
+	value := p.get("", rootPath, pathBackendResponseForwardingFlushInterval)
+	if len(value) == 0 {
+		return nil
+	}
+
+	return &types.ResponseForwarding{
+		FlushInterval: value,
+	}
 }
 
 func (p *Provider) getCircuitBreaker(rootPath string) *types.CircuitBreaker {
@@ -411,8 +426,9 @@ func (p *Provider) getAuthDigest(rootPath string) *types.Digest {
 // getAuthForward Create Forward Auth from path
 func (p *Provider) getAuthForward(rootPath string) *types.Forward {
 	forwardAuth := &types.Forward{
-		Address:            p.get("", rootPath, pathFrontendAuthForwardAddress),
-		TrustForwardHeader: p.getBool(false, rootPath, pathFrontendAuthForwardTrustForwardHeader),
+		Address:             p.get("", rootPath, pathFrontendAuthForwardAddress),
+		TrustForwardHeader:  p.getBool(false, rootPath, pathFrontendAuthForwardTrustForwardHeader),
+		AuthResponseHeaders: p.getList(rootPath, pathFrontendAuthForwardAuthResponseHeaders),
 	}
 
 	// TLS configuration

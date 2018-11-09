@@ -8,6 +8,14 @@
     expression = "{{ $circuitBreaker.Expression }}"
   {{end}}
 
+  {{ $responseForwarding := getResponseForwarding $service.TraefikLabels }}
+  {{if $responseForwarding }}
+  [backends."backend-{{ $backendName }}".responseForwarding]
+    flushInterval = "{{ $responseForwarding.FlushInterval }}"
+  {{end}}
+
+
+
   {{ $loadBalancer := getLoadBalancer $service.TraefikLabels }}
   {{if $loadBalancer }}
   [backends."backend-{{ $backendName }}".loadBalancer]
@@ -106,6 +114,11 @@
       [frontends."frontend-{{ $service.ServiceName }}".auth.forward]
         address = "{{ $auth.Forward.Address }}"
         trustForwardHeader = {{ $auth.Forward.TrustForwardHeader }}
+        {{if $auth.Forward.AuthResponseHeaders }}
+        authResponseHeaders = [{{range $auth.Forward.AuthResponseHeaders }}
+          "{{.}}",
+          {{end}}]
+        {{end}}
 
         {{if $auth.Forward.TLS }}
         [frontends."frontend-{{ $service.ServiceName }}".auth.forward.tls]

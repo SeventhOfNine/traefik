@@ -49,6 +49,7 @@
     "autorest",
     "autorest/adal",
     "autorest/azure",
+    "autorest/azure/auth",
     "autorest/date",
     "autorest/to"
   ]
@@ -259,6 +260,12 @@
   revision = "2ea60e5f094469f9e65adb9cd103795b73ae743e"
 
 [[projects]]
+  name = "github.com/cloudflare/cloudflare-go"
+  packages = ["."]
+  revision = "1f9007fbecae20711133c60519338c41cef1ffb4"
+  version = "v0.8.5"
+
+[[projects]]
   branch = "master"
   name = "github.com/codahale/hdrhistogram"
   packages = ["."]
@@ -276,14 +283,14 @@
     ".",
     "parse"
   ]
-  revision = "b4c2f060875361c070ed2bc300c5929b82f5fa2e"
-  version = "v1.1.2"
+  revision = "aad81c7ac7f49671a59b9ede8ab22436e132a302"
+  version = "v1.3.0"
 
 [[projects]]
   branch = "master"
   name = "github.com/containous/mux"
   packages = ["."]
-  revision = "06ccd3e75091eb659b1d720cda0e16bc7057954c"
+  revision = "c33f32e268983f989290677351b871b65da75ba5"
 
 [[projects]]
   name = "github.com/containous/staert"
@@ -345,6 +352,12 @@
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
   version = "v3.2.0"
+
+[[projects]]
+  name = "github.com/dimchansky/utfbom"
+  packages = ["."]
+  revision = "5448fe645cb1964ba70ac8f9f2ffe975e61a536c"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -517,19 +530,6 @@
   version = "v1.1.0"
 
 [[projects]]
-  name = "github.com/edeckers/auroradnsclient"
-  packages = [
-    ".",
-    "records",
-    "requests",
-    "requests/errors",
-    "tokens",
-    "zones"
-  ]
-  revision = "1563e622aaca0a8bb895a448f31d4a430ab97586"
-  version = "v1.0.3"
-
-[[projects]]
   branch = "master"
   name = "github.com/elazarl/go-bindata-assetfs"
   packages = ["."]
@@ -625,6 +625,12 @@
   name = "github.com/go-openapi/swag"
   packages = ["."]
   revision = "1d0bd113de87027671077d3c71eb3ac5d7dbba72"
+
+[[projects]]
+  name = "github.com/go-resty/resty"
+  packages = ["."]
+  revision = "d4920dcf5b7689548a6db640278a9b35a5b48ec6"
+  version = "v1.9.1"
 
 [[projects]]
   name = "github.com/go-stack/stack"
@@ -842,6 +848,12 @@
   revision = "b84e30acd515aadc4b783ad4ff83aff3299bdfe0"
 
 [[projects]]
+  name = "github.com/ldez/go-auroradns"
+  packages = ["."]
+  revision = "b40dfcae7c417f8129579362695dc1f3cfe5928d"
+  version = "v2.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/libkermit/compose"
   packages = [
@@ -861,6 +873,12 @@
   name = "github.com/libkermit/docker-check"
   packages = ["."]
   revision = "1113af38e5916529ad7317b0fe12e273e6e92af5"
+
+[[projects]]
+  name = "github.com/linode/linodego"
+  packages = ["."]
+  revision = "d0d31d8ca62fa3f7e4526ca0ce95de81e4ed001e"
+  version = "v0.5.1"
 
 [[projects]]
   name = "github.com/mailgun/minheap"
@@ -1295,7 +1313,7 @@
     "roundrobin",
     "utils"
   ]
-  revision = "fe51048067db50958154cd4040da878b10002a3a"
+  revision = "7d94d212f808222b72fd0b8bb171bfcd4e27ffca"
 
 [[projects]]
   name = "github.com/vulcand/predicate"
@@ -1339,6 +1357,7 @@
     "providers/dns/dnsimple",
     "providers/dns/dnsmadeeasy",
     "providers/dns/dnspod",
+    "providers/dns/dreamhost",
     "providers/dns/duckdns",
     "providers/dns/dyn",
     "providers/dns/exec",
@@ -1353,6 +1372,7 @@
     "providers/dns/iij",
     "providers/dns/lightsail",
     "providers/dns/linode",
+    "providers/dns/linodev4",
     "providers/dns/namecheap",
     "providers/dns/namedotcom",
     "providers/dns/netcup",
@@ -1365,10 +1385,11 @@
     "providers/dns/rfc2136",
     "providers/dns/route53",
     "providers/dns/sakuracloud",
+    "providers/dns/stackpath",
     "providers/dns/vegadns",
     "providers/dns/vultr"
   ]
-  revision = "621237d07213aa6dead90bdf6fd46251220fa669"
+  revision = "1151b4e3befc51b7b215179c87791753721dc6d5"
 
 [[projects]]
   branch = "master"
@@ -1380,6 +1401,8 @@
     "ed25519/internal/edwards25519",
     "ocsp",
     "pbkdf2",
+    "pkcs12",
+    "pkcs12/internal/rc2",
     "scrypt",
     "ssh/terminal"
   ]
@@ -1403,6 +1426,7 @@
     "ipv4",
     "ipv6",
     "proxy",
+    "publicsuffix",
     "trace",
     "websocket"
   ]
@@ -1413,6 +1437,7 @@
   name = "golang.org/x/oauth2"
   packages = [
     ".",
+    "clientcredentials",
     "google",
     "internal",
     "jws",
@@ -1789,6 +1814,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8eb11befb583dfb89320dd7b7aea9e54b40e0523e60e66ed418788394b873d44"
+  inputs-digest = "37e89a543fca153d166cc70fd7fed689f06d894140bf617f69f5f664ffee621e"
   solver-name = "gps-cdcl"
   solver-version = 1

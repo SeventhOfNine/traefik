@@ -147,8 +147,9 @@ func getAuthDigest(labels map[string]string) *types.Digest {
 // getAuthForward Create Forward Auth from labels
 func getAuthForward(labels map[string]string) *types.Forward {
 	forwardAuth := &types.Forward{
-		Address:            GetStringValue(labels, TraefikFrontendAuthForwardAddress, ""),
-		TrustForwardHeader: GetBoolValue(labels, TraefikFrontendAuthForwardTrustForwardHeader, false),
+		Address:             GetStringValue(labels, TraefikFrontendAuthForwardAddress, ""),
+		AuthResponseHeaders: GetSliceStringValue(labels, TraefikFrontendAuthForwardAuthResponseHeaders),
+		TrustForwardHeader:  GetBoolValue(labels, TraefikFrontendAuthForwardTrustForwardHeader, false),
 	}
 
 	// TLS configuration
@@ -355,6 +356,19 @@ func GetHealthCheck(labels map[string]string) *types.HealthCheck {
 		Timeout:  timeout,
 		Hostname: hostname,
 		Headers:  headers,
+	}
+}
+
+// GetResponseForwarding Create ResponseForwarding from labels
+func GetResponseForwarding(labels map[string]string) *types.ResponseForwarding {
+	if !HasPrefix(labels, TraefikBackendResponseForwardingFlushInterval) {
+		return nil
+	}
+
+	value := GetStringValue(labels, TraefikBackendResponseForwardingFlushInterval, "0")
+
+	return &types.ResponseForwarding{
+		FlushInterval: value,
 	}
 }
 
